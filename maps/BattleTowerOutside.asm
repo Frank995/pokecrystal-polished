@@ -38,20 +38,6 @@ BattleTowerOutsideYoungsterText_NotYetOpen: ; unreferenced
 	line "looking up at it."
 	done
 
-BattleTowerOutsideYoungsterText_Mobile: ; unreferenced
-	text "Wow, the BATTLE"
-	line "TOWER is huge!"
-
-	para "Since there are a"
-	line "whole bunch of"
-
-	para "trainers inside,"
-	line "there must also be"
-
-	para "a wide variety of"
-	line "#MON."
-	done
-
 BattleTowerOutsideYoungsterText:
 	text "Wow, the BATTLE"
 	line "TOWER is huge!"
@@ -81,16 +67,6 @@ BattleTowerOutsideBeautyText:
 
 	para "should go into"
 	line "battle…"
-	done
-
-BattleTowerOutsideSailorText_Mobile: ; unreferenced
-	text "Ehehehe…"
-	line "I sneaked out of"
-	cont "work to come here."
-
-	para "I'm never giving"
-	line "up until I become"
-	cont "a LEADER!"
 	done
 
 BattleTowerOutsideSailorText:

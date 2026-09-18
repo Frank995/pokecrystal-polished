@@ -290,7 +290,7 @@ GetIconGFX:
 	add hl, de
 	ld de, HeldItemIcons
 	lb bc, BANK(HeldItemIcons), 2
-	call GetGFXUnlessMobile
+	call Request2bpp
 	ld a, [wCurIconTile]
 	add 10
 	ld [wCurIconTile], a
@@ -338,16 +338,10 @@ endr
 	pop hl
 
 	lb bc, BANK(Icons), 8
-	call GetGFXUnlessMobile
+	call Request2bpp
 
 	pop hl
 	ret
-
-GetGFXUnlessMobile:
-	ld a, [wLinkMode]
-	cp LINK_MOBILE
-	jp nz, Request2bpp
-	jp Get2bppViaHDMA
 
 FreezeMonIcons:
 	ld hl, wSpriteAnimationStructs

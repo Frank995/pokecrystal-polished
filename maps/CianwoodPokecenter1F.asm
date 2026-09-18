@@ -103,18 +103,6 @@ CianwoodPokecenter1FUnusedText1: ; unreferenced
 	line "in VIOLET."
 	done
 
-CianwoodPokecenter1FUnusedText2: ; unreferenced
-	text "I've been battling"
-	line "my pal in VIOLET"
-
-	para "using a MOBILE"
-	line "ADAPTER link."
-
-	para "I'm down 5-7"
-	line "against him. I've"
-	cont "gotta crank it up!"
-	done
-
 CianwoodPokecenter1FSuperNerdText:
 	text "I love showing off"
 	line "the #MON that"

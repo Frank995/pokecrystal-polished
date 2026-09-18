@@ -168,18 +168,6 @@ VioletPokecenterFarawayLinkText: ; unreferenced
 	line "far away."
 	done
 
-VioletPokecenterMobileAdapterText: ; unreferenced
-	text "I just battled a"
-	line "friend in CIANWOOD"
-	cont "over a link."
-
-	para "If you connect a"
-	line "MOBILE ADAPTER,"
-
-	para "you can link with"
-	line "a friend far away."
-	done
-
 VioletPokecenter1FGameboyKidText:
 	text "A guy named BILL"
 	line "made the #MON"

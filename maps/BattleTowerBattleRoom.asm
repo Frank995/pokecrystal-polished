@@ -132,11 +132,6 @@ Script_ChallengeCanceled: ; unreferenced
 	closetext
 	end
 
-Text_ReturnedAfterSave_Mobile: ; unreferenced
-	text "You'll be returned"
-	line "after you SAVE."
-	done
-
 BattleTowerBattleRoom_MapEvents:
 	db 0, 0 ; filler
 

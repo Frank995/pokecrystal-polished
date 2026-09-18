@@ -1,14 +1,7 @@
 ; Functions relating to the timer interrupt and the real-time-clock.
 
-Timer:: ; unreferenced
-	push af
-	ldh a, [hMobile]
-	and a
-	jr z, .not_mobile
-	call MobileTimer
-
-.not_mobile
-	pop af
+TimerInterrupt::
+; The Mobile Adapter GB is never connected, so this interrupt has nothing to do.
 	reti
 
 LatchClock::

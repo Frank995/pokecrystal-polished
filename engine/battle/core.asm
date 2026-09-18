@@ -130,28 +130,16 @@ WildFled_EnemyFled_LinkBattleCanceled:
 	and BATTLERESULT_BITMASK
 	ld [wBattleResult], a ; WIN
 	ld hl, BattleText_EnemyFled
-	call CheckMobileBattleError
-	jr nc, .print_text
-
-	ld hl, wcd2a
-	bit 4, [hl]
-	jr nz, .skip_text
-
-	ld hl, BattleText_LinkErrorBattleCanceled
 
 .print_text
 	call StdBattleTextbox
 
-.skip_text
 	call StopDangerSound
-	call CheckMobileBattleError
-	jr c, .skip_sfx
 
 ; BUG: SFX_RUN does not play correctly when a wild Pokémon flees from battle (see docs/bugs_and_glitches.md)
 	ld de, SFX_RUN
 	call PlaySFX
 
-.skip_sfx
 	call SetPlayerTurn
 	ld a, 1
 	ld [wBattleEnded], a
@@ -175,14 +163,6 @@ BattleTurn:
 	call HandleBerserkGene
 	call UpdateBattleMonInParty
 	farcall AIChooseMove
-
-	call IsMobileBattle
-	jr nz, .not_disconnected
-	farcall Function100da5
-	farcall StartMobileInactivityTimer
-	farcall Function100dd8
-	jp c, .quit
-.not_disconnected
 
 	call CheckPlayerLockedIn
 	jr c, .skip_iteration
@@ -209,9 +189,6 @@ BattleTurn:
 .false
 	call Battle_PlayerFirst
 .proceed
-	call CheckMobileBattleError
-	jr c, .quit
-
 	ld a, [wForcedSwitch]
 	and a
 	jr nz, .quit
@@ -876,8 +853,6 @@ Battle_EnemyFirst:
 	callfar AI_SwitchOrTryItem
 	jr c, .switch_item
 	call EnemyTurn_EndOpponentProtectEndureDestinyBond
-	call CheckMobileBattleError
-	ret c
 	ld a, [wForcedSwitch]
 	and a
 	ret nz
@@ -892,8 +867,6 @@ Battle_EnemyFirst:
 	jp z, HandleEnemyMonFaint
 	call RefreshBattleHuds
 	call PlayerTurn_EndOpponentProtectEndureDestinyBond
-	call CheckMobileBattleError
-	ret c
 	ld a, [wForcedSwitch]
 	and a
 	ret nz
@@ -920,8 +893,6 @@ Battle_PlayerFirst:
 	ld a, [wForcedSwitch]
 	and a
 	ret nz
-	call CheckMobileBattleError
-	ret c
 	call HasEnemyFainted
 	jp z, HandleEnemyMonFaint
 	call HasPlayerFainted
@@ -939,8 +910,6 @@ Battle_PlayerFirst:
 	call TryEnemyFlee
 	jp c, WildFled_EnemyFled_LinkBattleCanceled
 	call EnemyTurn_EndOpponentProtectEndureDestinyBond
-	call CheckMobileBattleError
-	ret c
 	ld a, [wForcedSwitch]
 	and a
 	ret nz
@@ -2054,8 +2023,6 @@ HandleEnemyMonFaint:
 
 .dont_flee
 	call ForcePlayerMonChoice
-	call CheckMobileBattleError
-	jp c, WildFled_EnemyFled_LinkBattleCanceled
 
 	ld a, BATTLEPLAYERACTION_USEITEM
 	ld [wBattlePlayerAction], a
@@ -2362,8 +2329,6 @@ WinTrainerBattle:
 	ld hl, BattleText_EnemyWasDefeated
 	call StdBattleTextbox
 
-	call IsMobileBattle
-	jr z, .mobile
 	ld a, [wLinkMode]
 	and a
 	ret nz
@@ -2389,14 +2354,6 @@ WinTrainerBattle:
 .skip_win_loss_text
 
 	jp .give_money
-
-.mobile
-	call BattleWinSlideInEnemyTrainerFrontpic
-	ld c, 40
-	call DelayFrames
-	ld c, $4 ; win
-	farcall Mobile_PrintOpponentBattleMessage
-	ret
 
 .battle_tower
 	call BattleWinSlideInEnemyTrainerFrontpic
@@ -2642,8 +2599,6 @@ HandlePlayerMonFaint:
 
 .switch
 	call ForcePlayerMonChoice
-	call CheckMobileBattleError
-	jp c, WildFled_EnemyFled_LinkBattleCanceled
 	ld a, c
 	and a
 	ret nz
@@ -2735,14 +2690,12 @@ ForcePlayerMonChoice:
 .skip_link
 	xor a ; BATTLEPLAYERACTION_USEMOVE
 	ld [wBattlePlayerAction], a
-	call CheckMobileBattleError
-	jr c, .enemy_fainted_mobile_error
 	ld hl, wEnemyMonHP
 	ld a, [hli]
 	or [hl]
 	jr nz, .send_out_pokemon
 
-.enemy_fainted_mobile_error
+.enemy_fainted
 	call ClearSprites
 	call ClearBGPalettes
 	call _LoadHPBar
@@ -2800,28 +2753,6 @@ PlayerPartyMonEntrance:
 	call SetPlayerTurn
 	jp SpikesDamage
 
-CheckMobileBattleError:
-	ld a, [wLinkMode]
-	cp LINK_MOBILE
-	jr nz, .not_mobile ; It's not a mobile battle
-
-	ld a, [wcd2b]
-	and a
-	jr z, .not_mobile
-
-; We have a mobile battle and something else happened
-	scf
-	ret
-
-.not_mobile
-	xor a
-	ret
-
-IsMobileBattle:
-	ld a, [wLinkMode]
-	cp LINK_MOBILE
-	ret
-
 SetUpBattlePartyMenu:
 	call ClearBGPalettes
 SetUpBattlePartyMenu_Loop: ; switch to fullscreen menu?
@@ -2840,13 +2771,7 @@ JumpToPartyMenuAndPrintText:
 	ret
 
 SelectBattleMon:
-	call IsMobileBattle
-	jr z, .mobile
 	farcall PartyMenuSelect
-	ret
-
-.mobile
-	farcall Mobile_PartyMenuSelect
 	ret
 
 PickPartyMonInBattle:
@@ -2882,8 +2807,6 @@ ForcePickPartyMonInBattle:
 .pick
 	call PickPartyMonInBattle
 	ret nc
-	call CheckMobileBattleError
-	ret c
 
 	ld de, SFX_WRONG
 	call PlaySFX
@@ -2904,8 +2827,6 @@ ForcePickSwitchMonInBattle:
 
 .pick
 	call ForcePickPartyMonInBattle
-	call CheckMobileBattleError
-	ret c
 	call SwitchMonAlreadyOut
 	jr c, .pick
 
@@ -2982,28 +2903,11 @@ LostBattle:
 
 .not_tied
 	ld hl, LostAgainstText
-	call IsMobileBattle
-	jr z, .mobile
 
 .text
 	call StdBattleTextbox
 
 .end
-	scf
-	ret
-
-.mobile
-; Remove the enemy from the screen.
-	hlcoord 0, 0
-	lb bc, 8, 21
-	call ClearBox
-	call BattleWinSlideInEnemyTrainerFrontpic
-
-	ld c, 40
-	call DelayFrames
-
-	ld c, $3 ; lost
-	farcall Mobile_PrintOpponentBattleMessage
 	scf
 	ret
 
@@ -3823,8 +3727,6 @@ TryToRunAwayFromBattle:
 	ld [wCurPlayerMove], a
 	call LinkBattleSendReceiveAction
 	call SafeLoadTempTilemapToTilemap
-	call CheckMobileBattleError
-	jr c, .mobile
 
 	; Got away safely
 	ld a, [wBattleAction]
@@ -3847,20 +3749,6 @@ TryToRunAwayFromBattle:
 	call WaitSFX
 	ld hl, BattleText_GotAwaySafely
 	call StdBattleTextbox
-	call WaitSFX
-	call LoadTilemapToTempTilemap
-	scf
-	ret
-
-.mobile
-	call StopDangerSound
-	ld hl, wcd2a
-	bit 4, [hl]
-	jr nz, .skip_link_error
-	ld hl, BattleText_LinkErrorBattleCanceled
-	call StdBattleTextbox
-
-.skip_link_error
 	call WaitSFX
 	call LoadTilemapToTempTilemap
 	scf
@@ -4933,28 +4821,8 @@ BattleMenu_Fight:
 	ret
 
 LoadBattleMenu2:
-	call IsMobileBattle
-	jr z, .mobile
-
 	farcall LoadBattleMenu
 	and a
-	ret
-
-.mobile
-	farcall Mobile_LoadBattleMenu
-	ld a, [wcd2b]
-	and a
-	ret z
-
-	ld hl, wcd2a
-	bit 4, [hl]
-	jr nz, .error
-	ld hl, BattleText_LinkErrorBattleCanceled
-	call StdBattleTextbox
-	ld c, 60
-	call DelayFrames
-.error
-	scf
 	ret
 
 BattleMenu_Pack:
@@ -5085,14 +4953,10 @@ BattleMenuPKMN_Loop:
 	jr .loop
 
 .PressedB:
-	call CheckMobileBattleError
-	jr c, .Cancel
 	jr BattleMenuPKMN_Loop
 
 .Stats:
 	call Battle_StatsScreen
-	call CheckMobileBattleError
-	jr c, .Cancel
 	jp BattleMenuPKMN_ReturnFromStats
 
 .Cancel:
@@ -5107,13 +4971,7 @@ BattleMenuPKMN_Loop:
 	jp BattleMenu
 
 .GetMenu:
-	call IsMobileBattle
-	jr z, .mobile
 	farcall BattleMonMenu
-	ret
-
-.mobile
-	farcall MobileBattleMonMenu
 	ret
 
 Battle_StatsScreen:
@@ -5330,12 +5188,6 @@ CheckAmuletCoin:
 	ret
 
 MoveSelectionScreen:
-	call IsMobileBattle
-	jr nz, .not_mobile
-	farcall Mobile_MoveSelectionScreen
-	ret
-
-.not_mobile
 	ld hl, wEnemyMonMoves
 	ld a, [wMoveSelectionMenuType]
 	dec a
@@ -5648,7 +5500,6 @@ MoveInfoBox:
 	ld b, 3
 	ld c, 9
 	call Textbox
-	call MobileTextBorder
 
 	ld a, [wPlayerDisableCount]
 	and a
@@ -5718,11 +5569,6 @@ MoveInfoBox:
 
 .PrintPP:
 	hlcoord 5, 11
-	ld a, [wLinkMode] ; What's the point of this check?
-	cp LINK_MOBILE
-	jr c, .ok
-	hlcoord 5, 11
-.ok
 	push hl
 	ld de, wStringBuffer1
 	lb bc, 1, 2
@@ -8371,18 +8217,6 @@ ShowLinkBattleParticipantsAfterEnd:
 	ret
 
 DisplayLinkBattleResult:
-	farcall CheckMobileBattleError
-	jp c, .Mobile_InvalidBattle
-	call IsMobileBattle2
-	jr nz, .proceed
-
-	ld hl, wcd2a
-	bit 4, [hl]
-	jr z, .proceed
-
-	farcall DetermineLinkBattleResult
-
-.proceed
 	ld a, [wBattleResult]
 	and $f
 	cp LOSE
@@ -8418,15 +8252,7 @@ DisplayLinkBattleResult:
 
 	call CloseSRAM
 
-	call IsMobileBattle2
-	jr z, .mobile
 	call WaitPressAorB_BlinkCursor
-	call ClearTilemap
-	ret
-
-.mobile
-	ld c, 200
-	call DelayFrames
 	call ClearTilemap
 	ret
 
@@ -8436,23 +8262,6 @@ DisplayLinkBattleResult:
 	db "YOU LOSE@"
 .Draw:
 	db "  DRAW@"
-
-.Mobile_InvalidBattle:
-	hlcoord 6, 8
-	ld de, .InvalidBattle
-	call PlaceString
-	ld c, 200
-	call DelayFrames
-	call ClearTilemap
-	ret
-
-.InvalidBattle:
-	db "INVALID BATTLE@"
-
-IsMobileBattle2:
-	ld a, [wLinkMode]
-	cp LINK_MOBILE
-	ret
 
 _DisplayLinkRecord:
 	ld a, BANK(sLinkBattleStats)
@@ -8917,7 +8726,6 @@ InitBattleDisplay:
 	ld b, 4
 	ld c, 18
 	call Textbox
-	farcall MobileTextBorder
 	hlcoord 1, 5
 	lb bc, 3, 7
 	call ClearBox
@@ -9142,11 +8950,4 @@ BattleStartMessage:
 	farcall BattleStart_TrainerHuds
 	pop hl
 	call StdBattleTextbox
-
-	call IsMobileBattle2
-	ret nz
-
-	ld c, $2 ; start
-	farcall Mobile_PrintOpponentBattleMessage
-
 	ret

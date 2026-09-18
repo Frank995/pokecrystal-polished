@@ -1,13 +1,6 @@
 InitCrystalData:
-	ld a, $1
-	ld [wPlayerPrefecture], a
 	xor a
-	ld [wPlayerAge], a
 	ld [wPlayerGender], a
-	ld [wPlayerPostalCode], a
-	ld [wPlayerPostalCode+1], a
-	ld [wPlayerPostalCode+2], a
-	ld [wPlayerPostalCode+3], a
 	ld [wd002], a
 	ld [wd003], a
 	ld a, [wCrystalFlags]

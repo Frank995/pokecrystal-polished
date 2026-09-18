@@ -2617,6 +2617,12 @@ CableClubCheckWhichChris:
 	ld [wScriptVar], a
 	ret
 
+ResetLinkMode:
+; special
+	xor a
+	ld [wLinkMode], a
+	ret
+
 GSLinkCommsBorderGFX: ; unreferenced
 INCBIN "gfx/trade/unused_gs_border_tiles.2bpp"
 

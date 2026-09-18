@@ -155,11 +155,6 @@ Script_BattleTowerHopeToServeYouAgain:
 	closetext
 	end
 
-Script_MobileError2: ; unreferenced
-	special BattleTowerMobileError
-	closetext
-	end
-
 Script_WaitButton:
 	waitbutton
 	closetext
@@ -218,11 +213,6 @@ Script_StartChallenge: ; unreferenced
 	writetext Text_RightThisWayToYourBattleRoom
 	waitbutton
 	sjump Script_ResumeBattleTowerChallenge
-
-Script_ReachedBattleLimit: ; unreferenced
-	writetext Text_FiveDayBattleLimit_Mobile
-	waitbutton
-	sjump Script_BattleTowerHopeToServeYouAgain
 
 Script_AMonLevelExceeds:
 	writetext Text_AMonLevelExceeds
@@ -485,24 +475,6 @@ Text_ThanksForVisiting:
 	line "visiting!"
 	done
 
-Text_BeatenAllTheTrainers_Mobile: ; unreferenced
-	text "Congratulations!"
-
-	para "You've beaten all"
-	line "the trainers!"
-
-	para "Your feat may be"
-	line "worth registering,"
-
-	para "<PLAYER>. With your"
-	line "results, you may"
-
-	para "be chosen as a"
-	line "ROOM LEADER."
-
-	para ""
-	done
-
 Text_CongratulationsYouveBeatenAllTheTrainers:
 	text "Congratulations!"
 
@@ -513,14 +485,6 @@ Text_CongratulationsYouveBeatenAllTheTrainers:
 	line "this great prize!"
 
 	para ""
-	done
-
-Text_AskRegisterRecord_Mobile: ; unreferenced
-	text "Would you like to"
-	line "register your"
-
-	para "record with the"
-	line "CENTER?"
 	done
 
 Text_PlayerGotFive:
@@ -640,14 +604,6 @@ Text_NextUpOpponentNo:
 	text ". Ready?"
 	done
 
-Text_SaveBeforeConnecting_Mobile: ; unreferenced
-	text "Your session will"
-	line "be SAVED before"
-
-	para "connecting with"
-	line "the CENTER."
-	done
-
 Text_SaveBeforeEnteringBattleRoom:
 	text "Before entering"
 	line "the BATTLE ROOM,"
@@ -674,15 +630,6 @@ Text_CancelYourBattleRoomChallenge:
 	line "ROOM challenge?"
 	done
 
-Text_RegisterRecordOnFile_Mobile: ; unreferenced
-	text "We have your"
-	line "previous record on"
-
-	para "file. Would you"
-	line "like to register"
-	cont "it at the CENTER?"
-	done
-
 Text_WeveBeenWaitingForYou:
 	text "We've been waiting"
 	line "for you. This way"
@@ -691,37 +638,12 @@ Text_WeveBeenWaitingForYou:
 	line "please."
 	done
 
-Text_FiveDayBattleLimit_Mobile:
-	text "You may enter only"
-	line "five BATTLE ROOMS"
-	cont "each day."
-
-	para "Please come back"
-	line "tomorrow."
-	done
-
 Text_TooMuchTimeElapsedNoRegister:
 	text "Sorry, but it's"
 	line "not possible to"
 
 	para "register your"
 	line "current record at"
-
-	para "the CENTER because"
-	line "too much time has"
-
-	para "elapsed since the"
-	line "start of your"
-	cont "challenge."
-	done
-
-Text_RegisterRecordTimedOut_Mobile: ; unreferenced
-; duplicate of Text_TooMuchTimeElapsedNoRegister
-	text "Sorry, but it's"
-	line "not possible to"
-
-	para "register your most"
-	line "recent record at"
 
 	para "the CENTER because"
 	line "too much time has"

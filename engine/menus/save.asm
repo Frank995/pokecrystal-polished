@@ -439,23 +439,6 @@ Function14d6c: ; unreferenced
 	call CloseSRAM
 	ret
 
-Function14d83: ; unreferenced
-	ld a, BANK(s4_a60c) ; MBC30 bank used by JP Crystal; inaccessible by MBC3
-	call OpenSRAM
-	xor a
-	ld [s4_a60c], a ; address of MBC30 bank
-	ld [s4_a60c+1], a ; address of MBC30 bank
-	call CloseSRAM
-	ret
-
-DisableMobileStadium: ; unreferenced
-	ld a, BANK(sMobileStadiumFlag)
-	call OpenSRAM
-	xor a
-	ld [sMobileStadiumFlag], a
-	call CloseSRAM
-	ret
-
 HallOfFame_InitSaveIfNeeded:
 	ld a, [wSavedAtLeastOnce]
 	and a
